@@ -1,0 +1,77 @@
+Karsten Braun
+
+My purpose is to analyze the data to find associations in health issues for my CAPSTONE project
+
+A) 
+
+Data: 
+Chen, Y., Zhang, X.-P., Yuan, J., Cai, B., Wang, X.-L., Wu, X.-L., Zhang, Y.-H., Zhang, X.-Y., Yin, T., Zhu, X.-H., Gu, Y.-J., Cui, S.-W., Lu, Z.-Q., & Li, X.-Y. (2018). Data from: Association of body mass index and age with incident diabetes in Chinese adults: a population-based cohort study (Version 1, p. 28363426 bytes) [Dataset]. Dryad. https://doi.org/10.5061/DRYAD.FT8750V
+
+Paper:
+Chen, Y., Zhang, X.-P., Yuan, J., Cai, B., Wang, X.-L., Wu, X.-L., Zhang, Y.-H., Zhang, X.-Y., Yin, T., Zhu, X.-H., Gu, Y.-J., Cui, S.-W., Lu, Z.-Q., & Li, X.-Y. (2018). Association of body mass index and age with incident diabetes in Chinese adults: A population-based cohort study. BMJ Open, 8(9), e021768. https://doi.org/10.1136/bmjopen-2018-021768
+
+
+B) https://datadryad.org/stash/dataset/doi:10.5061/dryad.ft8750v
+
+
+C) This data set was created to test if there is an association between obesity, diabetes, and age in adult Chinese persons. Everyone that was sampled did not have diabetes at the beginning of testing and diabetes is diagnosed if their fasting plasma glucose is greater than 7.00 mmol/L. Every patient was censored on the date they were diagnosed and on their final visit. The data shows various information for each individual including BMI, SBP, DBP, FPG, and family history that may be attributed to diabetes.
+
+
+D) Key:
+id = the id number of each person sampled
+
+age = age in years of the individuals, changed from 'Age (y)' in original data set
+
+gender = 1 is male and 2 is female, changed from 'Gender(1, male; 2, female)' in original data set
+
+site = id of location where each individual is from
+
+height = height of subjects in cm, changed from 'height(cm)' in original data set
+
+weight = weight of subjects in kg, changed from 'weight(kg)' in original data set
+
+BMI = body mass index of each individual in kg/meters^2, changed from 'BMI(kg/m2)' in original data set
+
+SBP = systolic blood pressure measured in millimeters of mercury (mmhg), changed from 'SBP(mmHg)' in original data set
+
+DBP = diastolic blood pressure measured in millimeters of mercury (mmhg), changed from 'DBP(mmHg)' in original data set
+
+FPG = fasting plasma glucose is a measurement of glucose after the individual has fasted, measured in mmol/L, changed from 'FPG (mmol/L)' in original data set
+
+Cholesterol = amount of cholesterol that each individual has, measured in mmol/L changed from 'Cholesterol(mmol/L)' in original data set
+
+Triglycerides = amount of triglycerides in each individual, measured in mmol/L, changed from 'Triglyceride(mmol/L)' in original data set
+
+HDL = amount of high-density lipoprotein in each individual, measured in mmol/L, changed from 'HDL-c(mmol/L)' in original data set
+
+LDL = amount of low-density lipoprotein in each individual, measured in mmol/L, changed from 'LDL(mmol/L)' in original data set
+
+ALT = amount of alanine aminotransferase enzyme in each individual, measured in Units/L, changed from 'ALT(U/L)' in original data set
+
+AST = amount of aspartate aminotransferase enzyme in each individual, measured in Units/L, changed from 'AST(U/L)' in original data set
+
+BUN = amount of blood urea nitrogen in each individual, measured in mmol/L
+CCR = creatinine clearance rate measured in umol/L changed from 'BUN(mmol/L)' in original data set
+
+CCR = creatine clearance rate, measured in umol/L, changed from 'CCR(umol/L)' in original data set
+
+final_FPG = Fasting plasma glucose at the last visit to the doctors, measured in mmol/L, changed from 'FPG of final visit(mmol/L)' in original data set
+
+diabetes_diagnosed = if diabetes was diagnosed during the follow up check, 1 is yes changed from Diabetes diagnosed during followup（1,Yes)' in original data set
+
+diabetes_censor = censor of diabetes at the follow up check, 1 is yes and 2 is no, changed from 'censor of diabetes at followup(1, Yes; 0, No)' in original data set
+
+followup_year = how many years it took for the followup, changed from year of followup' in original data set
+
+smoking_status = whether or not the individual is a smoker: 1 is a current smoker, 2 is if they have ever smoked, and 3 is if they have never smoked, changed from 'smoking status(1,current smoker;2, ever smoker;3,never smoker)' in original data set
+
+drinking_status = whether or not the individual drinks alchol: 1 is a current drinker, 2 is if they have ever drank, and 3 is if they have never drank, changed from 'drinking status(1,current drinker;2, ever drinker;3,never drinker)' in original data set
+
+family_history = whether or not the individual has a family history of diabetes: 1 is yes and 0 is no, changed from 'family histroy of diabetes(1,Yes;0,No)' in original data set
+
+
+E)
+
+1) changed column titles to make them more R friendly, changed columns are acknowledged in the key.
+
+2) empty cells were left empty in original data set, R will convert the empty cells to NA and I will remove those  NA values in R.
