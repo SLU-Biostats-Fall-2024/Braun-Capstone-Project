@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-Setup:
+## Setup:
 
 ```{r}
 rm(list=ls()) # cleans the environment
@@ -13,28 +13,38 @@ library(here) # imports the here package
 library(ggfortify) # imports the ggfortify package
 ```
 
-Import the data set:
+## Import the data set:
 
 ```{r}
 diabetes <- read.csv(here("data", "BMI and Diabetes.csv")) 
 # import the data and assign it to the variable name: "diabetes"
 ```
 
-Check for mistakes and outliers
-
-```{r}
-ggplot(diabetes, aes(x=Cholesterol, y=BMI)) +
-  geom_point()
-```
-
-Look at data:
+## Look at data:
 
 ```{r}
 glimpse(diabetes)
 ```
 
-Turn gender into a factor and turn 1s into male and 2s into female:
+This shows that we have 211,833 rows and 25 columns. The majority of the columns are ints or dbls. Age, Gender, diabetes_diagnosed, diabetes_censor, smoking_status, drinking_status, and family_history should be converted to factors. Gender should turned into Male/Female instead of 1/2.
 
+### Turn NA values in diabetes_diagnosed into 0s:
+
+```{r}
+fix_diabetes <- which(is.na(diabetes$diabetes_diagnosed)) # is.na locates all rows that are NA in the diabetes_diagnosed column
+
+diabetes$diabetes_diagnosed[fix_diabetes] <- 0 # turn NA values into 0
+
+diabetes$diabetes_diagnosed <- factor(diabetes$diabetes_diagnosed) # re-factor 
+```
+
+0 now represents individuals that were not diagnosed with diabetes during the experiment.
+
+## Convert variables to Factors:
+
+**Turn gender into a factor and turn 1s into male and 2s into female:**
+
+Reassigning gender values to male or female makes the data easier to understand for users.
 ```{r}
 fix_gender_M <- which(diabetes$Gender == 1)
 diabetes$Gender[fix_gender_M] <- "Male" # rename all 1 factors into male
@@ -45,99 +55,194 @@ diabetes$Gender[fix_gender_F] <- "Female" #rename all 2 factors into female
 diabetes$Gender <- factor(diabetes$Gender) # reassign the values
 ```
 
-Turn family_history, drinking_status, smoking_status, and site into factors
+
+**Turn family_history, drinking_status, smoking_status, and diabetes_diagnosed into factors:**
+
 ```{r}
 diabetes$family_history <- as.factor(diabetes$family_history)
+# turns family_history into a factor
 
 diabetes$drinking_status <- as.factor(diabetes$drinking_status)
+# turns drinking_status into a factor
 
 diabetes$smoking_status <- as.factor(diabetes$smoking_status)
+# turns smoking_status into a factor
 
-diabetes$site <- as.factor(diabetes$site)
+diabetes$diabetes_diagnosed <- as.factor(diabetes$diabetes_diagnosed)
+# turns diabetes_diagnosed into a factor
 ```
 
-create a mean arterial pressure column:
+## Create a mean arterial pressure column:
+
+I am creating a new column so that I can have 1 blood pressure number instead of using both systolic blood pressure and diastolic blood pressure.
 ```{r}
-diabetes <- diabetes |> mutate(MAP = (DBP + (1/3)*(SBP-DBP)))
+diabetes <- diabetes |> mutate(MAP = (DBP + (1/3)*(SBP-DBP))) 
+# creates a new column called MAP using DBP and SBP
 ```
 
-create a BMI_cat column:
+By using the systolic and diastolic blood pressures, we can calculate the mean arterial pressure (MAP) which gives us the average blood pressure in the arteries.
+
+## Create a BMI_cat column:
+
 ```{r}
 diabetes <- diabetes |> 
   mutate(BMI_cat = case_when(BMI < 18.5 ~ "Underweight",
                              BMI >= 18.5 & BMI < 25 ~ "Healthy",
                              BMI >= 25 & BMI < 30 ~ "Overweight",
                              BMI >= 30 ~ "Obese"))
+# BMI_cat is the category that each BMI falls into
+# case_when allows us to assign each category name to the specified BMI values
+
+diabetes$BMI_cat <- as.factor(diabetes$BMI_cat) # turn BMI_cat into a factor variable
+levels(diabetes$BMI_cat)
+```
+
+This lets us use BMI as a factor instead of integer.
+
+## Check for mistakes and outliers:
+
+**Check for outliers in BMI:**
+
+```{r}
+ggplot(diabetes, aes(x=BMI)) +
+  geom_boxplot(outlier.color="yellow") # creates a boxplot to see outliers (shown in red)
+
+diabetes |> 
+  arrange(desc(BMI)) |> # this arranges the BMI from highest to lowest
+  head(10) |> # this prints out the 10 highest BMI
+  view()
+
+# there are no low-end outliers
+```
+
+**Check for outliers in MAP:**
+
+```{r}
+ggplot(diabetes, aes(x=MAP)) +
+  geom_boxplot(outlier.color = "red") # creates a boxplot to see outliers (shown in red)
+
+diabetes |> 
+  arrange(desc(MAP)) |> # this arranges the MAP from highest to lowest
+  head(10) |> # this prints out the 10 highest MAPs
+  view()
+
+diabetes |> 
+  arrange(MAP) |> # this arranges the MAP from lowest to highest
+  head(10) |> # this prints out the 10 lowest MAPs
+  view()
+```
+
+**Check for outliers in FPG:**
+
+```{r}
+ggplot(diabetes, aes(x=FPG)) +
+  geom_boxplot(outlier.color = "blue") # creates a boxplot to see outliers (shown in blue)
+
+diabetes |> 
+  arrange(desc(FPG)) |> # sort FPG from highest to lowest
+  head(10) |> # look at the 10 highest values
+  view()
+
+diabetes |> 
+  arrange(FPG) |> # sort FPG from lowest to highest
+  head(10) |> # look at the 10 lowest values
+  view()
+```
+
+My analysis shows that there are a lot of outliers for BMI, FPG, and MAP. I plan to leave my outliers in my data set because it is health related and everyone's bodies/health readings are different. Outliers in these categories signal that those individuals may have serious health concerns.
+
+## Save the clean data set to my data folder:
+
+This will keep me from having to re-run all the above code in every new qmd file.
+```{r}
+write.csv(diabetes, here("data", "diabetes.csv"), row.names=FALSE)
+# row.names = FALSE prevents R from adding a column of row numbers to the output file
 ```
 
 
-Exploratory data analysis:
+## Exploratory data analysis:
 
-A) plot BMI vs diabetes diagnosed and interpret the results:
+#### 1) BMI vs diabetes_diagnosed
+
+**Plot BMI vs diabetes diagnosed:**
+
+I am looking to see if the mean BMI is different for individuals who have been diagnosed and not diagnosed with diabetes.
 ```{r}
 ggplot(diabetes, aes(BMI)) +
   geom_bar(width=1) +
   facet_wrap(diabetes$diabetes_diagnosed, scales = "free_y") # this allows us to see the different graphs more clearly despite having fewer samples for when diabetes_diagnosed = 1
 ```
-The average mean for diabetes diagnosed appears to be around 28 BMI while the average mean for no diabetes diagnosed appears to be around 22. I think that there will be a significant difference in the mean BMI for diagnosis of diabetes. 
 
-B) create a linear model
-```{r}
-diagnosed_model <- lm(BMI ~ diabetes_diagnosed, data = diabetes)
-```
+The average mean for diabetes diagnosed appears to be around 28 BMI while the average mean for no diabetes diagnosed appears to be around 22. I think that there will be a significant difference in the mean BMI for diagnosis of diabetes.
 
-C) check the assumptions
-```{r}
-autoplot(diagnosed_model, smooth.colour = NA)
-```
+**Calculate mean BMI and SD for diabetes diagnosed and not diagnosed:**
 
-
-Mean BMI and SD for diabetes diagnosed and not diagnosed:
-
+I am calculating the mean and sd BMI for diabetes diagnosed and not diagnosed.
 ```{r}
 diabetes_bmi <- diabetes |> 
-  group_by(diabetes_diagnosed) |>
+  group_by(diabetes_diagnosed) |> # groups mean and sd BMI by people who have been diagnosed with diabetes and people who havent 
   summarise(mean_bmi = mean(BMI), 
-            sd_bmi = sd(BMI))
+            sd_bmi = sd(BMI)) |> # calculates the mean and sd of BMI
+  view()
 ```
+The average BMI for individuals not diagnosed is 23.2. The average BMI for individuals diagnosed is 25.3. I think that there will be a significant difference in mean BMI between the groups.
 
+#### 2) BMI vs blood pressure:
 
+**Plot BMI vs MAP and interpret the results:**
 
-
-BMI by blood pressure:
-
-a) graph BMI vs MAP and interpret the results
+I am looking to see if there is a relationship between MAP and BMI
 ```{r}
 ggplot(diabetes, aes(x = MAP, y = BMI)) + 
-  geom_point()
+  geom_point() # creates a dotplot of MAP vs BMI
 ```
-There may be a slight positive association between MAP and BMI.
 
-b) create a model
+There may be a positive association between MAP and BMI.
+
+**Plot BMI_cat and MAP:**
+
+I am looking to see if there is a difference in mean MAP between BMI categories.
 ```{r}
-MAP_model <- lm(MAP ~ BMI, data = diabetes)
+ggplot(diabetes, aes(x= BMI_cat, y= MAP)) +
+  geom_boxplot() # creates a boxplot of MAP based on BMI category
 ```
 
-c) check the assumptions
+I believe that there will be a significant difference in MAP between BMI categories.
+
+**Calculate mean MAP for each BMI category:**
+
+I am calculating the mean and sd MAP between BMI categories.
 ```{r}
-autoplot(MAP_model, smooth.colour=NA)
+diabetes_BMI_cat <- diabetes |>
+  group_by(BMI_cat) |>
+  summarise(mean_MAP = mean(MAP, na.rm=T),
+            sd_MAP = sd(MAP, na.rm=T)) |>
+  view() # calculates mean and sd MAP for each BMI category
 ```
 
-d) create the regression test:
+The MAP for healthy individuals is around 87, 98 for obese, 94 for overweight, and 82 for underweight. I think there will be a significant difference in MAP between BMI categories.
+
+#### 3) FPG vs Age
+
+**Plot FPG and Diabetes_diagnosed:**
+
+I am looking to see if there is a difference in mean FPG between people who have been diagnosed with diabetes and people who have not been diagnosed with diabetes.
 ```{r}
-summary(MAP_model)
+ggplot(diabetes, aes(x = diabetes_diagnosed, y = FPG)) + 
+  geom_boxplot() # creates a boxplot of FPG based on diabetes diagnosis
 ```
 
-e) create a final graph
+The mean FPG for diabetes diagnosed appears to be around 5.8 and the mean FPG for diabetes not diagnosed appears to be around 4.4. I think that there will be a significant difference in mean FPG between diabetes diagnosis.
+
+**Calculate mean FPG for diabetes and no diabetes:**
+
+I am calculating the mean and sd FPG for diabetes diagnosed and diabetes not diagnosed.
 ```{r}
-ggplot(diabetes, aes(x=MAP, y=BMI)) +
-  geom_point()
+diabetes_FPG <- diabetes |>
+  group_by(diabetes_diagnosed) |> # groups calculations by diabetes diagnosed and not diagnosed
+  summarise(mean_FPG = mean(FPG), # calculates the mean FPG
+            sd_FPG = sd(FPG)) |> # calculates the SD FPG
+  view()
 ```
 
-
-
-a) graph triglycerides vs MAP and interpret
-```{r}
-ggplot(diabetes, aes(x = MAP, y = Triglycerides)) + 
-  geom_point()
-```
+The mean FPG for people without diabetes is 4.8 and the mean FPG for people with diabetes is 5.9. I think that there will be a significant difference in mean FPG between diabetes diagnosis.
