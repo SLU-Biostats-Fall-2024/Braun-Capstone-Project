@@ -1,0 +1,43 @@
+---
+title: "Braun-Preliminary-Analysis-Q2"
+format: html
+editor: visual
+---
+
+Is there a relationship between BMI and MAP?
+
+- Regression
+
+## Setup
+
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(here)
+library(ggfortify)
+```
+
+## Import the data
+
+```{r}
+diabetes <- read.csv(here("data", "diabetes.csv"))
+```
+
+## Initial Plot and Interpretation:
+```{r}
+ggplot(diabetes, aes(x=BMI, y=MAP)) +
+  geom_point()
+```
+There appears to be a positive relationship between BMI and MAP.
+
+## Create the model:
+```{r}
+MAP_model <- lm(MAP ~ BMI, data = diabetes)
+```
+
+## Check the assumptions:
+```{r}
+autoplot(MAP_model)
+```
+
+## 

@@ -1,0 +1,34 @@
+---
+title: "Braun-Preliminary-Analysis-Q1"
+format: html
+editor: visual
+---
+
+Does a higher BMI cause a higher risk for developing diabetes?
+
+- Logistic Regression
+
+## Setup
+
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(here)
+library(ggfortify)
+```
+
+## Import the data
+
+```{r}
+diabetes <- read.csv(here("data", "diabetes.csv"))
+```
+
+## Initial Plot and Interpretation:
+
+```{r}
+ggplot(diabetes, aes(BMI)) +
+  geom_histogram() +
+  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y")
+```
+I am freeing the y variable because the axis of the two plots are extremely different.
+
