@@ -1,0 +1,29 @@
+---
+title: "data-exploration-feedback"
+format: html
+editor: visual
+---
+
+## Data Exploration Feedback
+1. YOu might get rid of the README.md that is in your project root folder since it doesn't contain anything useful.
+
+2. Line 29 - GOOD! Thanks for applying my feedback.
+
+3. Line 34 - Ok to turn NAs into 0 in this case, but might be risky. Do you actually know that these folks did NOT have diabetes, or just that the question was not answered? If you fail to detect a significant result in some of your questions, this could be the reason.
+
+4. Line 79 - I like that you created a new bp column (MAP), but I'd like to see some justification for the formula you used. A citation would be fine.
+
+5. Line 109 your code makes outliers yellow but your comment says red.
+
+6. Line 135 - In your first two plots, we see outliers in the boxplot, but you don't address them in your commentary. Are you keeping them? Why? Why not?
+
+7. I would like to see you plot a number of histograms of your data. Humans (and other primates!) are highly visual and good at pattern recognition, so seeing an overall plot of your data in another way would be helpful for you to get a feel for your data.
+
+```{r}
+ggplot(diabetes, aes(FPG))+
+  geom_histogram()
+```
+etc.
+
+Good job.
+
