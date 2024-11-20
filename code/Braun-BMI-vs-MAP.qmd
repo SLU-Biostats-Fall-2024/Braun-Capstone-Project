@@ -15,10 +15,10 @@ My null hypothesis is that there will be no relationship between BMI people and 
 ## Setup
 
 ```{r}
-rm(list=ls())
-library(tidyverse)
-library(here)
-library(ggfortify)
+rm(list=ls()) # clear environment
+library(tidyverse) # import tidyverse package
+library(here) # import here package 
+library(ggfortify) # import ggfortify package
 ```
 
 ## Import the data
@@ -80,6 +80,10 @@ summary(MAP_model)
 
 This output tells us that the slope is .168 and the y-intercept is 13.72. It also shows us that the R-squared is .1398 which means MAP accounts for about 13.98% of the variation of BMI which is not too much.
 
+## Interpret
+
+We can reject our null hypothesis because the p-value is less than .001. This means that there is a relationship between MAP and BMI and that the slope of .168 is significantly different from zero. (F_1, 211807 = 34420, p-value \<\< .001)
+
 ## Make a better plot
 
 ```{r}
@@ -90,3 +94,5 @@ ggplot(diabetes, aes(x=MAP, y=BMI))+
   theme_bw()
 # this plot adds the slope line to the dotplot 
 ```
+
+This plot displays the slope (.168) which shows that it is not zero.

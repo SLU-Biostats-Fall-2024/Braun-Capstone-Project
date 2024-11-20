@@ -6,7 +6,7 @@ editor: visual
 
 In this file, I will be using the diabetes.csv data set to analyze BMI and diabetes_diagnosed. The question I will be asking is:
 
-Is there a difference in mean BMI between individuals with diabetes or without diabetes?
+Is there a difference in mean BMI between individuals with diabetes and without diabetes?
 
 I will analyze this question using a Two-sample T-test because I have a ratio response variable (BMI), a categorical predictor variable (diabetes_diagnosed), I am looking to see if there is a difference between group means, samples are independent because the BMI of each person is not related to another persons BMI, and I only have 2 groups to compare (diabetes and no diabetes).
 
@@ -15,10 +15,10 @@ My null hypothesis is that there will be no difference in mean BMI between peopl
 ## Setup
 
 ```{r}
-rm(list=ls())
-library(tidyverse)
-library(here)
-library(ggfortify)
+rm(list=ls()) # clear environment
+library(tidyverse) # import tidyverse package
+library(here) # import here package 
+library(ggfortify) # import ggfortify package
 ```
 
 ## Import the data
@@ -42,7 +42,8 @@ This plot will allow us to make initial estimates about the data.
 ```{r}
 ggplot(diabetes, aes(BMI)) +
   geom_histogram() +
-  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y") # creates a histogram of BMI based and separated by no diabetes diagnosis and diabetes diagnosis
+  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y") 
+# creates a histogram of BMI based and separated by no diabetes diagnosis and diabetes diagnosis
 ```
 
 I am freeing the y variable because the axis of the two plots are extremely different.
@@ -76,9 +77,12 @@ The residuals vs levels plot helps us see if there are any points that have a lo
 
 ```{r}
 t.test(BMI ~ diabetes_diagnosed, data = diabetes)
+# runs a two-sample t-test
 ```
 
 BMI acts as the response variable and diabetes_diagnosed is the predictor variable.
+
+## Interpret
 
 Based on the results of the two-sample t-test, we can reject our null hypothesis. People with diabetes have a significantly higher BMI than people without diabetes (t = -22.889, df = 1319.2, p-value \<\< .001)
 
@@ -89,6 +93,11 @@ ggplot(diabetes, aes(x=diabetes_diagnosed, y=BMI))+
   geom_boxplot()+
   geom_point(
     aes(color = diabetes_diagnosed), position = position_jitter(width = 0.05), alpha = 0.8)+
-  labs(x = "BMI", y = "MAP (mmHg)")
+  labs(x = "Diabetes Diagnosed (0=no, 1=yes)", y = "BMI") +
   theme_bw()
+# color the points by their diagnosis while also slightly jittering and making them transparent
+# change x and y axis names
+# change the theme
 ```
+
+This plot allows us to visualize the data and see the data in a different way after we found there was a significant difference in mean BMI between diabetes diagnosis. 

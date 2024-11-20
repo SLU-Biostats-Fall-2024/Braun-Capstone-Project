@@ -30,6 +30,14 @@ This shows that we have 211,833 rows and 25 columns. The majority of the columns
 
 ### Turn NA values in diabetes_diagnosed into 0s:
 
+I am doing this because I believe that all the NA values are individuals who have been followed up on and not diagnosed with diabetes. To check this I will find the amount of NA values in the followup_year column, if it is a negligible amount (\< 5% of data) then I will assume that the majority were not diagnosed with diabetes.
+
+```{r}
+length(which(is.na(diabetes$followup_year)))
+```
+
+This code shows that every person was followed up on so I will assume that people who did not get diagnosed with diabetes do not have diabetes.
+
 ```{r}
 fix_diabetes <- which(is.na(diabetes$diabetes_diagnosed)) # is.na locates all rows that are NA in the diabetes_diagnosed column
 
@@ -174,10 +182,12 @@ write.csv(diabetes, here("data", "diabetes.csv"), row.names=FALSE)
 #### 1) BMI vs diabetes_diagnosed
 
 **Plot BMI histogram**
+
 ```{r}
 ggplot(diabetes, aes(BMI)) +
   geom_histogram()
 ```
+
 This gives the reader an idea of what the BMI data looks like. Mean BMI appears to be around 23.
 
 **Plot BMI vs diabetes diagnosed:**
@@ -209,10 +219,12 @@ The average BMI for individuals not diagnosed is 23.2. The average BMI for indiv
 #### 2) BMI vs blood pressure:
 
 **Plot MAP histogram**
+
 ```{r}
 ggplot(diabetes, aes(MAP)) +
   geom_histogram()
 ```
+
 This gives the reader an idea of what the MAP data looks like. Mean MAP appears to be around 90 mmHg.
 
 **Plot BMI vs MAP and interpret the results:**
@@ -254,10 +266,12 @@ The MAP for healthy individuals is around 87, 98 for obese, 94 for overweight, a
 #### 3) FPG vs Gender vs diabetes_diagnosed
 
 **Plot FPG histogram**
+
 ```{r}
 ggplot(diabetes, aes(FPG)) +
   geom_histogram()
 ```
+
 This gives the reader an idea of what the FPG data looks like. The mean FPG appears to be around 4.4.
 
 **Plot FPG and Diabetes_diagnosed:**
