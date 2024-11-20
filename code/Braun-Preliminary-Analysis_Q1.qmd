@@ -4,9 +4,13 @@ format: html
 editor: visual
 ---
 
-Does a higher BMI cause a higher risk for developing diabetes?
+In this file, I will be using the diabetes.csv data set to analyze BMI and diabetes_diagnosed. The question I will be asking is:
 
-- Logistic Regression
+Is there a difference in mean BMI between individuals with diabetes or without diabetes?
+
+I will analyze this question using a Two-sample T-test because I have a ratio response variable (BMI), a categorical predictor variable (diabetes_diagnosed), I am looking to see if there is a difference between group means, samples are independent because the BMI of each person is not related to another persons BMI, and I only have 2 groups to compare (diabetes and no diabetes).
+
+My null hypothesis is that there will be no difference in mean BMI between people diagnosed with diabetes and people not diagnosed with diabetes.
 
 ## Setup
 
@@ -21,14 +25,70 @@ library(ggfortify)
 
 ```{r}
 diabetes <- read.csv(here("data", "diabetes.csv"))
+# this is the cleaned version of my original dataset
 ```
 
+```{r}
+diabetes$diabetes_diagnosed <- as.factor(diabetes$diabetes_diagnosed)
+# turns diabetes_diagnosed into a factor
+```
+
+Diabetes_diagnosed is a factor variable because it is either diagnosed or not diagnosed.
+
 ## Initial Plot and Interpretation:
+
+This plot will allow us to make initial estimates about the data.
 
 ```{r}
 ggplot(diabetes, aes(BMI)) +
   geom_histogram() +
-  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y")
+  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y") # creates a histogram of BMI based and separated by no diabetes diagnosis and diabetes diagnosis
 ```
+
 I am freeing the y variable because the axis of the two plots are extremely different.
 
+The average BMI for no diabetes appears to be around 23 while the average BMI for diabetes appears to be around 26. I think that individuals with diabetes will have a significantly larger average BMI compared to individuals without diabetes.
+
+## Create a model
+
+```{r}
+BMI_model <- lm(BMI ~ diabetes_diagnosed, data = diabetes)
+# use `lm()` to build a linear model with BMI as the response and diabetes_diagnosed as predictor
+```
+
+Creates a linear model using BMI as response variable and diabetes_diagnosed as predictor variable. This will be used to run our t-test.
+
+## Check assumptions
+
+```{r}
+autoplot(BMI_model)
+```
+
+The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line is straight which is good.
+
+The normal Q-Q plot shows us if our data meets the requirements for normality. Most of the points fall on or close to the line. The points increases towards the ends of the line but it still looks pretty good.
+
+The Scale-Location plot shows us if our data meets the requirements for equal variance. There is no real pattern to the data so it looks good.
+
+The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The blue line is pretty straight which means this assumption looks ok.
+
+## Run a two-sample T-test
+
+```{r}
+t.test(BMI ~ diabetes_diagnosed, data = diabetes)
+```
+
+BMI acts as the response variable and diabetes_diagnosed is the predictor variable.
+
+Based on the results of the two-sample t-test, we can reject our null hypothesis. People with diabetes have a significantly higher BMI than people without diabetes (t = -22.889, df = 1319.2, p-value \<\< .001)
+
+## Build a better plot
+
+```{r}
+ggplot(diabetes, aes(x=diabetes_diagnosed, y=BMI))+
+  geom_boxplot()+
+  geom_point(
+    aes(color = diabetes_diagnosed), position = position_jitter(width = 0.05), alpha = 0.8)+
+  labs(x = "BMI", y = "MAP (mmHg)")
+  theme_bw()
+```

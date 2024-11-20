@@ -81,6 +81,10 @@ diabetes <- diabetes |> mutate(MAP = (DBP + (1/3)*(SBP-DBP)))
 # creates a new column called MAP using DBP and SBP
 ```
 
+Calculation for MAP comes from:
+
+DeMers, D., & Wachs, D. (2024). Physiology, Mean Arterial Pressure. In *StatPearls*. StatPearls Publishing. <http://www.ncbi.nlm.nih.gov/books/NBK538226/>
+
 By using the systolic and diastolic blood pressures, we can calculate the mean arterial pressure (MAP) which gives us the average blood pressure in the arteries.
 
 ## Create a BMI_cat column:
@@ -106,7 +110,7 @@ This lets us use BMI as a factor instead of integer.
 
 ```{r}
 ggplot(diabetes, aes(x=BMI)) +
-  geom_boxplot(outlier.color="yellow") # creates a boxplot to see outliers (shown in red)
+  geom_boxplot(outlier.color="yellow") # creates a boxplot to see outliers (shown in yellow)
 
 diabetes |> 
   arrange(desc(BMI)) |> # this arranges the BMI from highest to lowest
@@ -115,6 +119,8 @@ diabetes |>
 
 # there are no low-end outliers
 ```
+
+My analysis shows that there are a lot of outliers for BMI. I plan to leave my outliers in my data set because it is health related and everyone's bodies/health readings are different. Outliers in this category signal that those individuals may have serious health concerns.
 
 **Check for outliers in MAP:**
 
@@ -133,6 +139,8 @@ diabetes |>
   view()
 ```
 
+My analysis shows that there are a lot of outliers for MAP. I plan to leave my outliers in my data set because it is health related and everyone's bodies/health readings are different. Outliers in this category signal that those individuals may have serious health concerns.
+
 **Check for outliers in FPG:**
 
 ```{r}
@@ -150,7 +158,7 @@ diabetes |>
   view()
 ```
 
-My analysis shows that there are a lot of outliers for BMI, FPG, and MAP. I plan to leave my outliers in my data set because it is health related and everyone's bodies/health readings are different. Outliers in these categories signal that those individuals may have serious health concerns.
+My analysis shows that there are a lot of outliers for FPG. I plan to leave my outliers in my data set because it is health related and everyone's bodies/health readings are different. Outliers in this category signal that those individuals may have serious health concerns.
 
 ## Save the clean data set to my data folder:
 
@@ -164,6 +172,13 @@ write.csv(diabetes, here("data", "diabetes.csv"), row.names=FALSE)
 ## Exploratory data analysis:
 
 #### 1) BMI vs diabetes_diagnosed
+
+**Plot BMI histogram**
+```{r}
+ggplot(diabetes, aes(BMI)) +
+  geom_histogram()
+```
+This gives the reader an idea of what the BMI data looks like. Mean BMI appears to be around 23.
 
 **Plot BMI vs diabetes diagnosed:**
 
@@ -192,6 +207,13 @@ diabetes_bmi <- diabetes |>
 The average BMI for individuals not diagnosed is 23.2. The average BMI for individuals diagnosed is 25.3. I think that there will be a significant difference in mean BMI between the groups.
 
 #### 2) BMI vs blood pressure:
+
+**Plot MAP histogram**
+```{r}
+ggplot(diabetes, aes(MAP)) +
+  geom_histogram()
+```
+This gives the reader an idea of what the MAP data looks like. Mean MAP appears to be around 90 mmHg.
 
 **Plot BMI vs MAP and interpret the results:**
 
@@ -230,6 +252,13 @@ diabetes_BMI_cat <- diabetes |>
 The MAP for healthy individuals is around 87, 98 for obese, 94 for overweight, and 82 for underweight. I think there will be a significant difference in MAP between BMI categories.
 
 #### 3) FPG vs Gender vs diabetes_diagnosed
+
+**Plot FPG histogram**
+```{r}
+ggplot(diabetes, aes(FPG)) +
+  geom_histogram()
+```
+This gives the reader an idea of what the FPG data looks like. The mean FPG appears to be around 4.4.
 
 **Plot FPG and Diabetes_diagnosed:**
 
