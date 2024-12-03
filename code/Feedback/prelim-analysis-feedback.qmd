@@ -1,0 +1,50 @@
+---
+title: "preliminary analysis"
+format: html
+editor: visual
+---
+
+## Preliminary analysis feedback
+
+### General
+- use leading zeroes in text when writing numbers e.g. 0.001 rather than .001.
+
+- Please define all abbreviations for variables with first use. Then it is fine to keep using the abbreviations.
+
+- Nice, thorough job! 
+
+### BMI vs. MAP
+Line 9 - please define abbreviations with 1st use (BMI, MAP)
+
+I wonder if you want to switch the axes? To my way of thinking (about the biology), body mass index is a measure of obesity and overall health, so I might expect blood pressure to respond to BMI rather than body mass index respond to blood pressure. It won't change the math of your analysis at all, but makes more intuitive sense.
+
+Line 13 - after  your null, give your alternative, and, if possible, biological expectation for expected relationship.
+
+Lines 39 - 45 - GREAT job estimating coefficients
+
+Line 89 - think about your axis labels and making this informative to everyone (= good commmunication). I like that you have units on x-axis, but you have plenty of space to write out the abbreviation names.
+
+You've done a very nice, clean job walking through this analysis - my main suggestion for improvement is to add some biological thinking in the .qmd file - both in terms of your null and alternative hypotheses at the outset and in terms of your final interpretation at the end.
+
+### PA BMI cat vs FPG
+Some of the same feedback as above - please define abbreviations and give some biological context for hypotheses. Provide alternative hypothesis with biological justification.For example, at line 49, WHY do you believe there will be a difference in at least 2 groups, and it what groups do you expect a difference?
+
+Final figure: I love that you figured out how to put the letters on the plot with `annotate`. Unless I'm mistaken, the units for FPG are not mmhg. Also, since an ANOVA is acutally comparing means and variances, I wonder if a boxplot is the best representation of the results? Perhaps a point layer something like figure 5.11 in your book and maybe you could figure out how to add black error lines to the points? ?  Just a thought.
+
+For this analysis, I'd like to see a final results statement clearly laid out that includes the results of the overall model (F, df, P) as well as, in words, the results of the Tukey test.
+
+### Diabetes vs. BMI
+Please see above - about null hypotheses and some biological justification.
+
+Again, you've done a clean and thorough job here, but I dont think you've chosen the best final plot. 
+
+You have clearly shown a difference in BMI between those with and without diabetes. But you could approach this question differently, in a way that is used for a lot of medical data, by using a logistic regression. You would turn the question on its head and ask "does BMI do a good job predicting whether someone will be diagnosed with diabetes?
+
+You would then have a binary response (diabetes no or yes) and a continuous predictor.
+
+The advantage to this method is that one of the outputs of logistic regression is something called the "log odds" which can be converted to "odds ratios". It is from odds ratios that we hear statements like "Every 1 unit increase in hours smoked increases the odds of lung cancer by 10%".
+
+So if you ran a logistic regression, you'd be able to specify more precisely the degree to which increases in bmi impact the odds of being diagnosed with diabetes, which would be perhaps more informative than your 2-sample t-test. Plus you'd get to try your hand at another type of analysis.
+
+I have a lot of example code in the Cap DAP Example github repo on how to conduct single-predictor logistic regression. Take a look.
+
