@@ -100,4 +100,4 @@ ggplot(diabetes, aes(x=diabetes_diagnosed, y=BMI))+
 # change the theme
 ```
 
-This plot allows us to visualize the data and see the data in a different way after we found there was a significant difference in mean BMI between diabetes diagnosis. 
+This plot allows us to visualize the data and see the data in a different way after we found there was a significant difference in mean BMI between diabetes diagnosis.

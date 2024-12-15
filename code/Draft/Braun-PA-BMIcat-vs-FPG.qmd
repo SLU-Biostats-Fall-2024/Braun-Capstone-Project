@@ -30,15 +30,16 @@ diabetes <- read.csv(here("data", "diabetes.csv"))
 ```
 
 We need to turn BMI_cat into a factor variable:
+
 ```{r}
 diabetes$BMI_cat <- as.factor(diabetes$BMI_cat)
 # turn BMI_Cat into a factor with four levels (underweight, healthy, overweight, obese)
 ```
 
-
 ## Initial Plot and Interpretation:
 
 Plot a boxplot with BMI_cat and FPG
+
 ```{r}
 ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
   geom_boxplot()
@@ -48,6 +49,7 @@ ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
 The mean FPG for healthy is around 4.5, 5 for Obese, 4.7 for overweight, and 4.5 for underweight. I believe that there will be a significant difference in mean FPG in at least two groups.
 
 ## Create a model
+
 ```{r}
 FPG_model <- lm(FPG ~ BMI_cat, data = diabetes)
 # use `lm()` to build a linear model with BMI as the response and MAP as predictor
@@ -56,9 +58,11 @@ FPG_model <- lm(FPG ~ BMI_cat, data = diabetes)
 FPG acts as the response variable and BMI_cat as the predictor variable. The linear model will allow us to run an ANOVA test.
 
 ## Check assumptions
+
 ```{r}
 autoplot(FPG_model)
 ```
+
 The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line is straight which is good.
 
 The normal Q-Q plot shows us if our data meets the requirements for normality. Most of the points fall on or close to the line which is good.
@@ -68,33 +72,30 @@ The Scale-Location plot shows us if our data meets the requirements for equal va
 The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The line is straight which is good.
 
 ## Run ANOVA
+
 ```{r}
 anova(FPG_model)
 ```
 
-The anova table shows that there is a significant difference in mean FPG between the groups so we can reject our null hypothesis. 
+The anova table shows that there is a significant difference in mean FPG between the groups so we can reject our null hypothesis.
 
 ```{r}
 summary(FPG_model)
 ```
 
-The intercept is the healthy category because it comes first alphabetically. The summary shows how different each category is from healthy. Obese has a significantly higher mean FPG than healthy, overweight has a significantly higher FPG than healthy, and underweight has a significantly lower FPG than healthy. (p-value << .001)
+The intercept is the healthy category because it comes first alphabetically. The summary shows how different each category is from healthy. Obese has a significantly higher mean FPG than healthy, overweight has a significantly higher FPG than healthy, and underweight has a significantly lower FPG than healthy. (p-value \<\< .001)
 
 ## Run tukey test
+
 ```{r}
 phc1 <- glht(FPG_model, linfct = mcp(BMI_cat="Tukey"))
 summary(phc1)
 ```
 
-The tukey test shows that:
-- Obese has a significantly higher mean FPG than healthy (p << .001)
-- Overweight has a significantly higher mean FPG than healthy (p << .001)
-- Underweight has a significantly lower mean FPG than healthy (p << .001)
-- Overweight has a significantly lower mean FPG than obese (p << .001)
-- Underweight has a significantly lower mean FPG than obese (p << .001)
-- Underweight has a significantly lower mean FPG than overweight (p << .001)
+The tukey test shows that: - Obese has a significantly higher mean FPG than healthy (p \<\< .001) - Overweight has a significantly higher mean FPG than healthy (p \<\< .001) - Underweight has a significantly lower mean FPG than healthy (p \<\< .001) - Overweight has a significantly lower mean FPG than obese (p \<\< .001) - Underweight has a significantly lower mean FPG than obese (p \<\< .001) - Underweight has a significantly lower mean FPG than overweight (p \<\< .001)
 
 ## Show the compact letter display
+
 ```{r}
 cld(phc1) # different letters signify a significant difference
 ```
@@ -102,6 +103,7 @@ cld(phc1) # different letters signify a significant difference
 Each BMI category has a different letter which means they are all significantly different from each other.
 
 ## Make a better plot
+
 ```{r}
 ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
   geom_boxplot(aes(fill = BMI_cat)) +
@@ -113,4 +115,3 @@ ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
 ```
 
 This plot shows the boxplots of FPG for each BMI category. Different letters signify significant differences.
-
