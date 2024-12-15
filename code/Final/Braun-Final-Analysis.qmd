@@ -10,7 +10,12 @@ Is there a relationship between Body Mass Index (BMI) and Mean Arterial Pressure
 
 I will analyze this question using a regression test because I have a ratio response variable (BMI), a continuous predictor variable (MAP), I am looking to see if there is a relationship between two variables, and I only have 1 predictor variable.
 
-My null hypothesis is that there will be no relationship between BMI people and MAP.
+My null hypothesis is that there will be no relationship between BMI people and MAP. This means that an increase or decrease in BMI will not result in an increase or decrease in MAP.
+
+My alternative hypothesis is that there will be a relationship between BMI and MAP because a larger body size can elevate blood pressure as the circulatory system must work harder to increase perfusion to all cells.
+
+Source:
+Health Risks of Overweight & Obesity—NIDDK. (n.d.). National Institute of Diabetes and Digestive and Kidney Diseases. Retrieved October 24, 2024, from https://www.niddk.nih.gov/health-information/weight-management/adult-overweight-obesity/health-risks
 
 ## Setup
 
@@ -31,7 +36,7 @@ diabetes <- read.csv(here("data", "diabetes.csv"))
 ## Initial Plot and Interpretation:
 
 ```{r}
-ggplot(diabetes, aes(x=MAP, y=BMI)) +
+ggplot(diabetes, aes(x=BMI, y=MAP)) +
   geom_point()
 # create a dotplot to see if there appears to be any relationship (positive, negative, linear, etc.)
 ```
@@ -47,9 +52,8 @@ We can estimate the y-intercept to be around 20.
 ## Create the model:
 
 ```{r}
-MAP_model <- lm(BMI ~ MAP, data = diabetes)
+MAP_model <- lm(MAP ~ BMI, data = diabetes)
 # use `lm()` to build a linear model with BMI as the response and MAP as predictor
-
 ```
 
 BMI acts as the response variable and MAP as the predictor variable. The linear model will allow us to run a regression analysis.
@@ -82,17 +86,343 @@ This output tells us that the slope is 0.168 and the y-intercept is 13.72. It al
 
 ## Interpret
 
-We can reject our null hypothesis because the p-value is less than 0.001. This means that there is a relationship between MAP and BMI and that the slope of 0.168 is significantly different from zero. (F_1, 211807 = 34420, p-value \<\< 0.001)
+We can reject our null hypothesis and accept our alternative hypothesis because the p-value is less than 0.001. This means that there is a relationship between MAP and BMI and that the slope of 0.168 is significantly different from zero. (F_1, 211807 = 34420, p-value \<\< 0.001). We can conclude that as BMI increases, MAP also increases which makes sense because individuals with a higher BMI will have larger bodies and the body needs to increase blood pressure to perfuse to all cells.
 
 ## Make a better plot
 
 ```{r}
-ggplot(diabetes, aes(x=MAP, y=BMI))+
+ggplot(diabetes, aes(x=BMI, y=MAP))+
   geom_point()+
   geom_smooth(method = "lm")+
-  labs(x = "MAP (mmHg)", y = "BMI")+
+  labs(y = "Mean Arterial Pressure (mmHg)", x = "Body Mass Index")+
   theme_bw()
-# this plot adds the slope line to the dotplot 
+# this plot adds the slope line to the dotplot
 ```
 
 This plot displays the slope (0.168) which shows that it is not zero.
+
+
+
+
+
+
+In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) categories and Fasting Plasma Glucose (FPG). The question I will be asking is:
+
+Is there a difference in mean FPG between individuals the different categories of BMI?
+
+I will analyze this question using an ANOVA test because I have a ratio response variable (FPG), a categorical predictor variable (BMI_cat), I am looking to see if there is a difference between group means, samples are independent because the FPG of each person is not related to another persons FPG, and I have 4 groups to compare (underweight, healthy, overweight, obese).
+
+My null hypothesis is that there will be no difference in mean FPG between different BMI categories. This means that FPG for each group will be roughly the same.
+
+My alternative hypothesis is that there will be a difference in mean FPG between different BMI categories. Excess body fat can decrease the effectiveness of insulin which results in a higher blood glucose.
+
+
+Source:
+Sepp, E., Kolk, H., Lõivukene, K., & Mikelsaar, M. (2014). Higher blood glucose level associated with body mass index and gut microbiota in elderly people. Microbial Ecology in Health and Disease, 25, 10.3402/mehd.v25.22857. https://doi.org/10.3402/mehd.v25.22857
+
+
+## Setup
+
+```{r}
+rm(list=ls()) # clear environment
+library(tidyverse) # import tidyverse package
+library(here) # import here package 
+library(ggfortify) # import ggfortify package
+library(multcomp) # import multcomp package
+```
+
+## Import the data
+
+```{r}
+diabetes <- read.csv(here("data", "diabetes.csv"))
+# this is the cleaned version of my original dataset
+```
+
+We need to turn BMI_cat into a factor variable:
+
+```{r}
+diabetes$BMI_cat <- as.factor(diabetes$BMI_cat)
+# turn BMI_Cat into a factor with four levels (underweight, healthy, overweight, obese)
+```
+
+## Initial Plot and Interpretation:
+
+Plot a boxplot with BMI_cat and FPG
+
+```{r}
+ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
+  geom_boxplot()
+# creates a boxplot of FPG for each BMI category
+```
+
+The mean FPG for healthy is around 4.5, 5 for Obese, 4.7 for overweight, and 4.5 for underweight. I believe that there will be a significant difference in mean FPG between BMI categories. I think that there will be a significant difference between healthy and obese and underweight and obese because of the difference in body fat.
+
+## Create a model
+
+```{r}
+FPG_model <- lm(FPG ~ BMI_cat, data = diabetes)
+# use `lm()` to build a linear model with BMI as the response and MAP as predictor
+```
+
+FPG acts as the response variable and BMI_cat as the predictor variable. The linear model will allow us to run an ANOVA test.
+
+## Check assumptions
+
+```{r}
+autoplot(FPG_model)
+```
+
+The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line is straight which is good.
+
+The normal Q-Q plot shows us if our data meets the requirements for normality. Most of the points fall on or close to the line which is good.
+
+The Scale-Location plot shows us if our data meets the requirements for equal variance. There is no real pattern to the data so it looks good.
+
+The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The line is straight which is good.
+
+## Run ANOVA
+
+```{r}
+anova(FPG_model)
+```
+
+The anova table shows that there is a significant difference in mean FPG between the groups so we can reject our null hypothesis.
+
+```{r}
+summary(FPG_model)
+```
+
+The intercept is the healthy category because it comes first alphabetically. The summary shows how different each category is from healthy. Obese has a significantly higher mean FPG than healthy, overweight has a significantly higher FPG than healthy, and underweight has a significantly lower FPG than healthy. (p-value \<\< 0.001)
+
+## Run tukey test
+
+```{r}
+phc1 <- glht(FPG_model, linfct = mcp(BMI_cat="Tukey"))
+summary(phc1)
+```
+
+The tukey test shows that: - Obese has a significantly higher mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly higher mean FPG than healthy (p \<\< 0.001) - Underweight has a significantly lower mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than overweight (p \<\< 0.001)
+
+## Show the compact letter display
+
+```{r}
+cld(phc1) # different letters signify a significant difference
+```
+
+Each BMI category has a different letter which means they are all significantly different from each other.
+
+## Interpretation
+
+We can reject our null hypothesis and accept our alternative hypothesis because the p-value is less than 0.001 after running our ANOVA test (df = 3, residual df = 211829). The F value is 2689.7 which means that the differences between groups are significantly greater than the variances in each group. After running a tukey test, we found that the p-value is less than 0.001 between every category. This shows that the BMI category an individual is in has an effect on their FPG levels.
+
+
+## Make a better plot
+
+```{r}
+FPG_mean <- diabetes |> 
+  group_by(BMI_cat) |>
+  summarise(mean_fpg = mean(FPG)) 
+# Finds the mean FPG for each category
+```
+
+```{r}
+ggplot(diabetes, aes(x = BMI_cat, y = FPG)) +
+  geom_point(alpha = .3, aes(color=BMI_cat), size =2) +
+  geom_point(data = FPG_mean, aes(y = mean_fpg, x = BMI_cat, color=BMI_cat), shape = "diamond", size = 8) +
+  labs(x = "Body Mass Index Category", y = "Fasting Plasma Glucose (mg/dL)") +
+  annotate("text", x = c(4.2,3.2,2.2,1.2), y=c(5.5,5.8,6,5.6),
+           label=c("D","C", "B", "A"))
+# color each set of points by their BMI category, label x and y axis, and add the CLD letters to show where significant differences lie, Large diamond represents the mean FPG of each cateogry
+```
+
+This plot shows the points of FPG for each BMI category. The large diamond shows the mean FPG for each category. Different letters signify significant differences.
+
+
+
+
+
+
+
+In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) and diabetes_diagnosed. The question I will be asking is:
+
+Is there a difference in mean BMI between individuals with diabetes and without diabetes?
+
+I will analyze this question using a Two-sample T-test because I have a ratio response variable (BMI), a categorical predictor variable (diabetes_diagnosed), I am looking to see if there is a difference between group means, samples are independent because the BMI of each person is not related to another persons BMI, and I only have 2 groups to compare (diabetes and no diabetes).
+
+My null hypothesis is that there will be no difference in mean BMI between people diagnosed with diabetes and people not diagnosed with diabetes.
+
+My alternative hypothesis is that there will be a difference in mean BMI between people diagnosed with diabetes and people not diagnosed with diabetes. There will be a difference because individuals with excess fat are more resistant to insulin.
+
+Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11–20. https://doi.org/10.1016/j.cmet.2021.12.012
+
+
+## Setup
+
+```{r}
+rm(list=ls()) # clear environment
+library(tidyverse) # import tidyverse package
+library(here) # import here package 
+library(ggfortify) # import ggfortify package
+```
+
+## Import the data
+
+```{r}
+diabetes <- read.csv(here("data", "diabetes.csv"))
+# this is the cleaned version of my original dataset
+```
+
+```{r}
+diabetes$diabetes_diagnosed <- as.factor(diabetes$diabetes_diagnosed)
+# turns diabetes_diagnosed into a factor
+```
+
+Diabetes_diagnosed is a factor variable because it is either diagnosed or not diagnosed.
+
+## Initial Plot and Interpretation:
+
+This plot will allow us to make initial estimates about the data.
+
+```{r}
+ggplot(diabetes, aes(BMI)) +
+  geom_histogram() +
+  facet_wrap(~diabetes_diagnosed, ncol=1, scales = "free_y") 
+# creates a histogram of BMI based and separated by no diabetes diagnosis and diabetes diagnosis
+```
+
+I am freeing the y variable because the axis of the two plots are extremely different.
+
+The average BMI for no diabetes appears to be around 23 while the average BMI for diabetes appears to be around 26. I think that individuals with diabetes will have a significantly larger average BMI compared to individuals without diabetes.
+
+## Create a model
+
+```{r}
+BMI_model <- lm(BMI ~ diabetes_diagnosed, data = diabetes)
+# use `lm()` to build a linear model with BMI as the response and diabetes_diagnosed as predictor
+```
+
+Creates a linear model using BMI as response variable and diabetes_diagnosed as predictor variable. This will be used to run our t-test.
+
+## Check assumptions
+
+```{r}
+autoplot(BMI_model)
+```
+
+The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line is straight which is good.
+
+The normal Q-Q plot shows us if our data meets the requirements for normality. Most of the points fall on or close to the line. The points increases towards the ends of the line but it still looks pretty good.
+
+The Scale-Location plot shows us if our data meets the requirements for equal variance. There is no real pattern to the data so it looks good.
+
+The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The blue line is pretty straight which means this assumption looks ok.
+
+## Run a two-sample T-test
+
+```{r}
+t.test(BMI ~ diabetes_diagnosed, data = diabetes)
+# runs a two-sample t-test
+```
+
+BMI acts as the response variable and diabetes_diagnosed is the predictor variable.
+
+## Interpretation
+
+Based on the results of the two-sample t-test, we can reject our null hypothesis. People with diabetes have a significantly higher BMI than people without diabetes (t = -22.889, df = 1319.2, p-value \<\< 0.001)
+
+## Build a better plot
+
+```{r}
+ggplot(diabetes, aes(x=diabetes_diagnosed, y=BMI))+
+  geom_boxplot()+
+  geom_point(
+    aes(color = diabetes_diagnosed), position = position_jitter(width = 0.05), alpha = 0.8)+
+  labs(x = "Diabetes Diagnosed (0=no, 1=yes)", y = "BMI") +
+  theme_bw()
+# color the points by their diagnosis while also slightly jittering and making them transparent
+# change x and y axis names
+# change the theme
+```
+
+This plot allows us to visualize the data and see the data in a different way after we found there was a significant difference in mean BMI between diabetes diagnosis.
+
+
+
+
+
+
+
+In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) and diabetes_diagnosed. The question I will be asking is:
+
+What is the probability of type II diabetes being diagnosed based on BMI?
+
+I will analyze this question using a logisitic regression because I have a binary response variable (diabetes_diagnosed), a ratio predictor variable (BMI), I am looking to see if there is a relationship between predictor and response.
+
+My null hypothesis is that there will be no relationship between BMI and diagnosis of diabetes.
+
+My alternative hypothesis is that there will be a relationship between BMI and diagnosis of diabetes. There will be a relationship because individuals with excess fat are more resistant to insulin.
+
+Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11–20. https://doi.org/10.1016/j.cmet.2021.12.012
+
+
+## Logistic Regression
+```{r}
+library(oddsratio)
+library(visreg)
+```
+
+## Initial Plot and Interpretation
+```{r}
+ggplot(data = diabetes, aes(x=BMI, y = diabetes_diagnosed)) +
+  geom_point(position = position_jitter(width = .08)) # jitter so we can get a better idea of the point spread
+```
+
+It is difficult to tell if BMI has a significant effect on the diagnosis of diabetes because of the amount of points on the graph. The points when diabetes is diagnosed has a smaller distribution compared to those not diagnosed. Based on studies, I believe that an increase in BMI unit will lead to a greater probability of getting diabetes.
+
+
+## Fit the model
+```{r}
+diagnosis_model <- glm(diabetes_diagnosed ~ BMI, family = "binomial", data = diabetes)
+
+summary(diagnosis_model)
+```
+The coefficients in the output indicate the average change in log odds of diabetes being diagnosed (yes = 1) with each increase in a BMI point.
+
+A 1 unit increase in BMI increases the log odds of being diagnosed with diabetes 0.1609.
+
+## odds ratio
+```{r}
+or_glm(data = diabetes,
+       model = diagnosis_model,
+       incr = list(BMI = 1))
+```
+
+Using the odds ratio output, we can see that for every 1 unit increase in BMI, the odds that diabetes will be diagnosed is 1.175. This means that getting diagnosed with diabetes will be 1.2 times more likely.
+
+## Plot
+
+```{r}
+ggplot(diabetes, aes(BMI, diabetes_diagnosed))+
+  geom_point()+
+  stat_smooth(method = "glm", method.args = list(family = "binomial"), se = F)
+```
+
+
+```{r}
+visreg(diagnosis_model, "BMI",
+       gg = T,
+       scale = "response") +
+  labs(x = "BMI",
+       y = "probability of being diagnosed")+
+  theme_bw()
+```
+
+This plot tells us that there appears to be a 
+
+
+```{r}
+ggplot(diabetes, aes(BMI)) +
+  geom_histogram() +
+  facet_wrap(~diabetes_diagnosed, scales = "free_y", ncol=1)
+```
+
