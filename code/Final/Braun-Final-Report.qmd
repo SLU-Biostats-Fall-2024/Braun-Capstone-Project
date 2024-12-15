@@ -1,0 +1,13 @@
+---
+title: "Final Report"
+format: html
+editor: visual
+---
+
+## Introduction
+
+The data set that this report is based on contains information about obesity and diabetes in Chinese adults. The data set comes from a population-based cohort study completed by Chen et al. in 2018 which was uploaded to datadryad.org. This research aimed to see if there was a relationship between obesity, age, and diabetes. The study was completed from 2010 to 2016 and contains data from 211,833 individuals.
+
+The first step in the data preparation phase was to look at the data types of each column. This gave me an idea of which columns must be changed into factors. The next step was to convert the NA values in the diabetes_diagnosed column to 0's. I did this because while NA values may have been individuals who were not re-tested for diabetes, each NA value had a followup_year filled out. This means that if those individuals were not diagnosed with diabetes, they did not have it at the end of the study. The third step was to turn gender, family_history, drinking_status, smoking_status, and diabetes_diagnosed into factor variables. The fourth step was to create a Mean Arterial Pressure (MAP) column so that I can use one blood pressure number instead of using both systolic and diastolic blood pressure in my analysis. The fifth step was to create a BMI_cat column which sorted the BMI numbers into underweight, healthy, overweight, and obesity which allowed me to run an ANOVA test. The sixth step was to check for outliers in BMI, MAP, and FPG because those were the columns I would be using in my analysis. There were a lot of outliers in each test but I decided to keep them because there can be a lot of variability when it comes to health and people's bodies. The seventh step was to create plots and summary statistics for BMI, MAP, diabetes_diagnosed, FPG, and BMI_cat.
+
+## Analysis
