@@ -14,8 +14,7 @@ My null hypothesis is that there will be no relationship between BMI people and 
 
 My alternative hypothesis is that there will be a relationship between BMI and MAP because a larger body size can elevate blood pressure as the circulatory system must work harder to increase perfusion to all cells.
 
-Source:
-Health Risks of Overweight & Obesity—NIDDK. (n.d.). National Institute of Diabetes and Digestive and Kidney Diseases. Retrieved October 24, 2024, from https://www.niddk.nih.gov/health-information/weight-management/adult-overweight-obesity/health-risks
+Source: Health Risks of Overweight & Obesity—NIDDK. (n.d.). National Institute of Diabetes and Digestive and Kidney Diseases. Retrieved October 24, 2024, from https://www.niddk.nih.gov/health-information/weight-management/adult-overweight-obesity/health-risks
 
 ## Setup
 
@@ -101,11 +100,6 @@ ggplot(diabetes, aes(x=BMI, y=MAP))+
 
 This plot displays the slope (0.168) which shows that it is not zero.
 
-
-
-
-
-
 In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) categories and Fasting Plasma Glucose (FPG). The question I will be asking is:
 
 Is there a difference in mean FPG between individuals the different categories of BMI?
@@ -116,10 +110,7 @@ My null hypothesis is that there will be no difference in mean FPG between diffe
 
 My alternative hypothesis is that there will be a difference in mean FPG between different BMI categories. Excess body fat can decrease the effectiveness of insulin which results in a higher blood glucose.
 
-
-Source:
-Sepp, E., Kolk, H., Lõivukene, K., & Mikelsaar, M. (2014). Higher blood glucose level associated with body mass index and gut microbiota in elderly people. Microbial Ecology in Health and Disease, 25, 10.3402/mehd.v25.22857. https://doi.org/10.3402/mehd.v25.22857
-
+Source: Sepp, E., Kolk, H., Lõivukene, K., & Mikelsaar, M. (2014). Higher blood glucose level associated with body mass index and gut microbiota in elderly people. Microbial Ecology in Health and Disease, 25, 10.3402/mehd.v25.22857. https://doi.org/10.3402/mehd.v25.22857
 
 ## Setup
 
@@ -215,7 +206,6 @@ Each BMI category has a different letter which means they are all significantly 
 
 We can reject our null hypothesis and accept our alternative hypothesis because the p-value is less than 0.001 after running our ANOVA test (df = 3, residual df = 211829). The F value is 2689.7 which means that the differences between groups are significantly greater than the variances in each group. After running a tukey test, we found that the p-value is less than 0.001 between every category. This shows that the BMI category an individual is in has an effect on their FPG levels.
 
-
 ## Make a better plot
 
 ```{r}
@@ -237,12 +227,6 @@ ggplot(diabetes, aes(x = BMI_cat, y = FPG)) +
 
 This plot shows the points of FPG for each BMI category. The large diamond shows the mean FPG for each category. Different letters signify significant differences.
 
-
-
-
-
-
-
 In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) and diabetes_diagnosed. The question I will be asking is:
 
 Is there a difference in mean BMI between individuals with diabetes and without diabetes?
@@ -254,7 +238,6 @@ My null hypothesis is that there will be no difference in mean BMI between peopl
 My alternative hypothesis is that there will be a difference in mean BMI between people diagnosed with diabetes and people not diagnosed with diabetes. There will be a difference because individuals with excess fat are more resistant to insulin.
 
 Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11–20. https://doi.org/10.1016/j.cmet.2021.12.012
-
 
 ## Setup
 
@@ -346,12 +329,6 @@ ggplot(diabetes, aes(x=diabetes_diagnosed, y=BMI))+
 
 This plot allows us to visualize the data and see the data in a different way after we found there was a significant difference in mean BMI between diabetes diagnosis.
 
-
-
-
-
-
-
 In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) and diabetes_diagnosed. The question I will be asking is:
 
 What is the probability of type II diabetes being diagnosed based on BMI?
@@ -364,14 +341,15 @@ My alternative hypothesis is that there will be a relationship between BMI and d
 
 Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11–20. https://doi.org/10.1016/j.cmet.2021.12.012
 
-
 ## Logistic Regression
+
 ```{r}
 library(oddsratio)
 library(visreg)
 ```
 
 ## Initial Plot and Interpretation
+
 ```{r}
 ggplot(data = diabetes, aes(x=BMI, y = diabetes_diagnosed)) +
   geom_point(position = position_jitter(width = .08)) # jitter so we can get a better idea of the point spread
@@ -379,18 +357,20 @@ ggplot(data = diabetes, aes(x=BMI, y = diabetes_diagnosed)) +
 
 It is difficult to tell if BMI has a significant effect on the diagnosis of diabetes because of the amount of points on the graph. The points when diabetes is diagnosed has a smaller distribution compared to those not diagnosed. Based on studies, I believe that an increase in BMI unit will lead to a greater probability of getting diabetes.
 
-
 ## Fit the model
+
 ```{r}
 diagnosis_model <- glm(diabetes_diagnosed ~ BMI, family = "binomial", data = diabetes)
 
 summary(diagnosis_model)
 ```
+
 The coefficients in the output indicate the average change in log odds of diabetes being diagnosed (yes = 1) with each increase in a BMI point.
 
 A 1 unit increase in BMI increases the log odds of being diagnosed with diabetes 0.1609.
 
 ## odds ratio
+
 ```{r}
 or_glm(data = diabetes,
        model = diagnosis_model,
@@ -407,7 +387,6 @@ ggplot(diabetes, aes(BMI, diabetes_diagnosed))+
   stat_smooth(method = "glm", method.args = list(family = "binomial"), se = F)
 ```
 
-
 ```{r}
 visreg(diagnosis_model, "BMI",
        gg = T,
@@ -417,12 +396,10 @@ visreg(diagnosis_model, "BMI",
   theme_bw()
 ```
 
-This plot tells us that there appears to be a 
-
+This plot tells us that there appears to be a
 
 ```{r}
 ggplot(diabetes, aes(BMI)) +
   geom_histogram() +
   facet_wrap(~diabetes_diagnosed, scales = "free_y", ncol=1)
 ```
-

@@ -1,0 +1,17 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## 
+```{r}
+ggplot(diabetes, aes(diabetes_diagnosed))+
+  geom_histogram(stat = "count")
+```
+
+I think the problem you are running into is the overwhelming difference in the number of samples b/w no diabetes and having diabetes. Statistically speaking, because of the overwhelming number of cases, there is just not that great an odds of being diagnosed overall, so even though you got a meaningful statistically significan result, your plot never approaches 1 (code at line 391 in your final analysis qmd).
+
+Your analysis looks correct, and we can see that increasing bmi increases the p of being diagnosed.
+
+So I'd go through and write up this model. It is telling us a lot, actually, even though the figure doesn't look as expected. 
