@@ -1,16 +1,16 @@
 ---
-title: "Final Report"
+title: "Braun Final Report"
 format: html
 editor: visual
 ---
 
-## Introduction
+## A) Introduction
 
 The data set that this report is based on contains information about obesity and diabetes in Chinese adults. The data set comes from a population-based cohort study completed by Chen et al. in 2018 which was uploaded to datadryad.org. This research aimed to see if there was a relationship between obesity, age, and diabetes. The study was completed from 2010 to 2016 and contains data from 211,833 individuals.
 
-The first step in the data preparation phase was to look at the data types of each column. This gave me an idea of which columns must be changed into factors. The next step was to convert the NA values in the diabetes_diagnosed column to 0's. I did this because while NA values may have been individuals who were not re-tested for diabetes, each NA value had a followup_year filled out. This means that if those individuals were not diagnosed with diabetes, they did not have it at the end of the study. The third step was to turn gender, family_history, drinking_status, smoking_status, and diabetes_diagnosed into factor variables. The fourth step was to create a Mean Arterial Pressure (MAP) column so that I can use one blood pressure number instead of using both systolic and diastolic blood pressure in my analysis. The fifth step was to create a BMI_cat column which sorted the BMI numbers into underweight, healthy, overweight, and obesity which allowed me to run an ANOVA test. The sixth step was to check for outliers in BMI, MAP, and FPG because those were the columns I would be using in my analysis. There were a lot of outliers in each test but I decided to keep them because there can be a lot of variability when it comes to health and people's bodies. The seventh step was to create plots and summary statistics for BMI, MAP, diabetes_diagnosed, FPG, and BMI_cat.
+The first step in the data preparation phase was to look at the data types of each column. This gave me an idea of which columns must be changed into factors. The next step was to convert the NA values in the diabetes_diagnosed column to 0's. I did this because while NA values may have been individuals who were not re-tested for diabetes, each NA value had a followup_year filled out. This means that if those individuals were not diagnosed with diabetes, they did not have it at the end of the study. The third step was to turn gender, family_history, drinking_status, smoking_status, and diabetes_diagnosed into factor variables. The fourth step was to create a Mean Arterial Pressure (MAP) column so that I can use one blood pressure number instead of using both systolic and diastolic blood pressure in my analysis. The fifth step was to create a BMI_cat column which sorted the BMI numbers into underweight, healthy, overweight, and obesity which allowed me to run an ANOVA test. The sixth step was to check for outliers in BMI, MAP, and FPG because those were the columns I would be using in my analysis. There were a lot of outliers in each test but I decided to keep them because there can be a lot of variability when it comes to health and people's bodies. The final step was to create plots and summary statistics for BMI, MAP, diabetes_diagnosed, FPG, and BMI_cat to get an idea of the data I would be working with.
 
-## Analysis
+## B) Analysis
 
 **Analysis 1: BMI vs MAP**
 
@@ -24,10 +24,9 @@ My null hypothesis is that there will be no relationship between BMI people and 
 
 My alternative hypothesis is that there will be a relationship between BMI and MAP because a larger body size can elevate blood pressure as the circulatory system must work harder to increase perfusion to all cells.
 
-Source:
-Health Risks of Overweight & Obesity—NIDDK. (n.d.). National Institute of Diabetes and Digestive and Kidney Diseases. Retrieved October 24, 2024, from https://www.niddk.nih.gov/health-information/weight-management/adult-overweight-obesity/health-risks
+Source: Health Risks of Overweight & Obesity---NIDDK. (n.d.). National Institute of Diabetes and Digestive and Kidney Diseases. Retrieved October 24, 2024, from https://www.niddk.nih.gov/health-information/weight-management/adult-overweight-obesity/health-risks
 
-## Setup
+-   **Setup**
 
 ```{r}
 rm(list=ls()) # clear environment
@@ -39,14 +38,14 @@ library(oddsratio) # needed for calculating odds ratio
 library(visreg) # needed for visualizing logistic regression plot
 ```
 
-## Import the data
+-   **Import the data**
 
 ```{r}
 diabetes <- read.csv(here("data", "diabetes.csv"))
 # this is the cleaned version of my original data set
 ```
 
-## Initial Plot and Interpretation:
+-   **Initial Plot and Interpretation:**
 
 ```{r}
 ggplot(diabetes, aes(x=BMI, y=MAP)) +
@@ -62,7 +61,7 @@ So the slope = 39/127 = 0.307.
 
 We can estimate the y-intercept to be around 20.
 
-## Create the model:
+-   **Create the model:**
 
 ```{r}
 MAP_model <- lm(MAP ~ BMI, data = diabetes)
@@ -71,7 +70,7 @@ MAP_model <- lm(MAP ~ BMI, data = diabetes)
 
 BMI acts as the response variable and MAP as the predictor variable. The linear model will allow us to run a regression analysis.
 
-## Check the assumptions:
+-   **Check the assumptions:**
 
 ```{r}
 autoplot(MAP_model)
@@ -85,7 +84,7 @@ The Scale-Location plot shows us if our data meets the requirements for equal va
 
 The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The blue line curves down quite a bit at the end but it should be ok.
 
-## Run and Interpret Model
+-   **Run and Interpret Model:**
 
 ```{r}
 anova(MAP_model)
@@ -101,7 +100,7 @@ This output tells us that the slope is 0.168 and the y-intercept is 13.72. It al
 
 We can reject our null hypothesis and accept our alternative hypothesis because the p-value is less than 0.001. This means that there is a relationship between MAP and BMI and that the slope of 0.168 is significantly different from zero. (F_1, 211807 = 34420, p-value \<\< 0.001). We can conclude that as BMI increases, MAP also increases which makes sense because individuals with a higher BMI will have larger bodies and the body needs to increase blood pressure to perfuse to all cells.
 
-## Make a better plot
+-   **Make a better plot:**
 
 ```{r}
 ggplot(diabetes, aes(x=BMI, y=MAP))+
@@ -113,7 +112,6 @@ ggplot(diabetes, aes(x=BMI, y=MAP))+
 ```
 
 This plot displays the slope (0.168) which shows that it is not zero.
-
 
 **Analysis 2: BMI Categories and FPG**
 
@@ -127,11 +125,9 @@ My null hypothesis is that there will be no difference in mean FPG between diffe
 
 My alternative hypothesis is that there will be a difference in mean FPG between different BMI categories. Excess body fat can decrease the effectiveness of insulin which results in a higher blood glucose.
 
+Source: Sepp, E., Kolk, H., Lõivukene, K., & Mikelsaar, M. (2014). Higher blood glucose level associated with body mass index and gut microbiota in elderly people. Microbial Ecology in Health and Disease, 25, 10.3402/mehd.v25.22857. https://doi.org/10.3402/mehd.v25.22857
 
-Source:
-Sepp, E., Kolk, H., Lõivukene, K., & Mikelsaar, M. (2014). Higher blood glucose level associated with body mass index and gut microbiota in elderly people. Microbial Ecology in Health and Disease, 25, 10.3402/mehd.v25.22857. https://doi.org/10.3402/mehd.v25.22857
-
-## Alter Data
+-   **Alter Data:**
 
 We need to turn BMI_cat into a factor variable:
 
@@ -140,7 +136,7 @@ diabetes$BMI_cat <- as.factor(diabetes$BMI_cat)
 # turn BMI_Cat into a factor with four levels (underweight, healthy, overweight, obese)
 ```
 
-## Initial Plot and Interpretation:
+-   **Initial Plot and Interpretation:**
 
 Plot a boxplot with BMI_cat and FPG
 
@@ -152,7 +148,7 @@ ggplot(diabetes, aes(x=BMI_cat, y=FPG)) +
 
 The mean FPG for healthy is around 4.5, 5 for Obese, 4.7 for overweight, and 4.5 for underweight. I believe that there will be a significant difference in mean FPG between BMI categories. I think that there will be a significant difference between healthy and obese and underweight and obese because of the difference in body fat.
 
-## Create a model
+-   **Create a model:**
 
 ```{r}
 FPG_model <- lm(FPG ~ BMI_cat, data = diabetes)
@@ -161,7 +157,7 @@ FPG_model <- lm(FPG ~ BMI_cat, data = diabetes)
 
 FPG acts as the response variable and BMI_cat as the predictor variable. The linear model will allow us to run an ANOVA test.
 
-## Check assumptions
+-   **Check assumptions:**
 
 ```{r}
 autoplot(FPG_model)
@@ -175,7 +171,7 @@ The Scale-Location plot shows us if our data meets the requirements for equal va
 
 The residuals vs levels plot helps us see if there are any points that have a lot of leverage and can effect the line. The line is straight which is good.
 
-## Run ANOVA
+-   **Run ANOVA:**
 
 ```{r}
 anova(FPG_model)
@@ -189,7 +185,7 @@ summary(FPG_model)
 
 The intercept is the healthy category because it comes first alphabetically. The summary shows how different each category is from healthy. Obese has a significantly higher mean FPG than healthy, overweight has a significantly higher FPG than healthy, and underweight has a significantly lower FPG than healthy. (p-value \<\< 0.001)
 
-## Run tukey test
+-   **Run tukey test:**
 
 ```{r}
 phc1 <- glht(FPG_model, linfct = mcp(BMI_cat="Tukey"))
@@ -198,7 +194,7 @@ summary(phc1)
 
 The tukey test shows that: - Obese has a significantly higher mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly higher mean FPG than healthy (p \<\< 0.001) - Underweight has a significantly lower mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than overweight (p \<\< 0.001)
 
-## Show the compact letter display
+-   **Show the compact letter display:**
 
 ```{r}
 cld(phc1) # different letters signify a significant difference
@@ -206,12 +202,11 @@ cld(phc1) # different letters signify a significant difference
 
 Each BMI category has a different letter which means they are all significantly different from each other.
 
-## Interpretation
+-   **Interpretation:**
 
 We can reject our null hypothesis and accept our alternative hypothesis because the p-value is less than 0.001 after running our ANOVA test (df = 3, residual df = 211829). The F value is 2689.7 which means that the differences between groups are significantly greater than the variances in each group. After running a tukey test, we found that the p-value is less than 0.001 between every category. This shows that the BMI category an individual is in has an effect on their FPG levels. This makes sense because excess body fat can decrease the effectiveness of insulin which results in higher levels of glucose in the blood.
 
-
-## Make a better plot
+-   **Make a better plot:**
 
 ```{r}
 FPG_mean <- diabetes |> 
@@ -233,7 +228,6 @@ ggplot(diabetes, aes(x = BMI_cat, y = FPG)) +
 
 This plot shows the points of FPG for each BMI category. The large diamond shows the mean FPG for each category. Different letters signify significant differences.
 
-
 **Analysis 3: Diabetes Diagnosis vs BMI**
 
 In this file, I will be using the diabetes.csv data set to analyze Body Mass Index (BMI) and diabetes_diagnosed. The question I will be asking is:
@@ -246,20 +240,19 @@ My null hypothesis is that there will be no relationship between BMI and diagnos
 
 My alternative hypothesis is that there will be a relationship between BMI and diagnosis of diabetes. There will be a relationship because individuals with excess fat are more resistant to insulin.
 
-Source:
-Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11–20. https://doi.org/10.1016/j.cmet.2021.12.012
+Source: Klein, S., Gastaldelli, A., Yki-Järvinen, H., & Scherer, P. E. (2022). Why Does Obesity Cause Diabetes? Cell Metabolism, 34(1), 11--20. https://doi.org/10.1016/j.cmet.2021.12.012
 
+-   **Initial Plot and Interpretation:**
 
-## Initial Plot and Interpretation
 ```{r}
 ggplot(data = diabetes, aes(x=BMI, y = diabetes_diagnosed)) +
   geom_point(position = position_jitter(width = .08)) # jitter so we can get a better idea of the point spread
 ```
 
-It is difficult to tell if BMI has a significant effect on the diagnosis of diabetes because of the amount of points on the graph. The points when diabetes is diagnosed has a smaller distribution compared to those not diagnosed. Based on studies, I believe that an increase in BMI unit will lead to a greater probability of getting diabetes. 
+It is difficult to tell if BMI has a significant effect on the diagnosis of diabetes because of the amount of points on the graph. The points when diabetes is diagnosed has a smaller distribution compared to those not diagnosed. Based on studies, I believe that an increase in BMI unit will lead to a greater probability of getting diabetes.
 
+-   **Fit the model:**
 
-## Fit the model
 ```{r}
 diagnosis_model <- glm(diabetes_diagnosed ~ BMI, family = "binomial", data = diabetes) # create binomial model
 
@@ -270,14 +263,11 @@ The coefficients in the output indicate the average change in log odds of diabet
 
 A 1 unit increase in BMI increases the log odds of being diagnosed with diabetes 0.1609.
 
-## Check Assumptions
-```{r}
-autoplot(diagnosis_model)
-```
+-   **Check Assumptions:**
 
-It appears that the model fits our assumptions. 
+We can assume that the assumptions are okay.
 
-## odds ratio and Interpretation
+-   **Odds ratio and Interpretation:**
 
 ```{r}
 or_glm(data = diabetes,
@@ -287,7 +277,7 @@ or_glm(data = diabetes,
 
 Using the odds ratio output, we can see that for every 1 unit increase in BMI, the odds that diabetes will be diagnosed is 1.175. This means that getting diagnosed with diabetes will be 1.2 times more likely. We have evidence that there is a relationship between BMI and diabetes diagnosis. We can reject our null hypothesis and accept our alternative hypothesis. This result makes sense because individuals with more fat are more resistant to insulin which will make them more likely to develop diabetes.
 
-## Final Plot
+-   **Final Plot:**
 
 ```{r}
 visreg(diagnosis_model, "BMI",
@@ -301,7 +291,8 @@ visreg(diagnosis_model, "BMI",
 
 This plot tells us that an increasing BMI increases the probability of being diagnosed with diabetes. Unfortunately, since there are so many samples and the rate of being diagnosed with diabetes is low, we cannot see the full S curve of the graph. The odds of being diagnosed with diabetes is low but we can confirm that a rising BMI will make it more likely to happen.
 
-
-## Challenges
+## C) Challenges
 
 I think that my biggest challenge was figuring out my logistic regression. We did not focus on it in class which made it a bit more difficult to learn. When I did finish the logistic regression test, my final graph did not display an S curve like expected. I assumed that the reason for this is the large amount of samples in the data set and the very low probability of diabetes being diagnosed after the four year experiment. Even though we could not see the S curve, the graph still showed that as BMI increased the probability of diabetes being diagnosed also increased. This issue was useful because it showed me that not every analysis will behave in the same way.
+
+One minor challenge I had was creating the final plot for the BMI category vs FPG analysis. I was not fully sure how to create a larger point that signified the mean and the letters that signify significant differences. It took me some time to figure out what R code was most appropriate to accomplish these tasks.
