@@ -73,7 +73,7 @@ BMI acts as the response variable and MAP as the predictor variable. The linear 
 -   **Check the assumptions:**
 
 ```{r}
-autoplot(MAP_model)
+autoplot(MAP_model) # checks assumptions
 ```
 
 The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line curves down slightly at the end but it is mostly straight which is good.
@@ -87,13 +87,13 @@ The residuals vs levels plot helps us see if there are any points that have a lo
 -   **Run and Interpret Model:**
 
 ```{r}
-anova(MAP_model)
+anova(MAP_model) # run anova for the model
 ```
 
 The anova table shows us that our null hypothesis can be rejected and that there is a relationship between BMI and MAP. The p-value \<\< .001 which indicates that the slope is significantly different from 0.
 
 ```{r}
-summary(MAP_model)
+summary(MAP_model) # run a summary of the model
 ```
 
 This output tells us that the slope is 0.168 and the y-intercept is 13.72. It also shows us that the R-squared is 0.1398 which means MAP accounts for about 13.98% of the variation of BMI which is not too much.
@@ -160,7 +160,7 @@ FPG acts as the response variable and BMI_cat as the predictor variable. The lin
 -   **Check assumptions:**
 
 ```{r}
-autoplot(FPG_model)
+autoplot(FPG_model) # checks assumptions of model
 ```
 
 The first plot shows us the residuals vs fitted which tells us if our data is a linear model. The blue line is straight which is good.
@@ -174,13 +174,13 @@ The residuals vs levels plot helps us see if there are any points that have a lo
 -   **Run ANOVA:**
 
 ```{r}
-anova(FPG_model)
+anova(FPG_model) # run anova test for the model
 ```
 
 The anova table shows that there is a significant difference in mean FPG between the groups so we can reject our null hypothesis.
 
 ```{r}
-summary(FPG_model)
+summary(FPG_model) # run a summary of the model
 ```
 
 The intercept is the healthy category because it comes first alphabetically. The summary shows how different each category is from healthy. Obese has a significantly higher mean FPG than healthy, overweight has a significantly higher FPG than healthy, and underweight has a significantly lower FPG than healthy. (p-value \<\< 0.001)
@@ -189,7 +189,7 @@ The intercept is the healthy category because it comes first alphabetically. The
 
 ```{r}
 phc1 <- glht(FPG_model, linfct = mcp(BMI_cat="Tukey"))
-summary(phc1)
+summary(phc1) # run a tukey test 
 ```
 
 The tukey test shows that: - Obese has a significantly higher mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly higher mean FPG than healthy (p \<\< 0.001) - Underweight has a significantly lower mean FPG than healthy (p \<\< 0.001) - Overweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than obese (p \<\< 0.001) - Underweight has a significantly lower mean FPG than overweight (p \<\< 0.001)
